@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import crypto from 'crypto'
 // import User from '../models/user.model'
 
 
@@ -23,7 +22,7 @@ const CourseSchema = new mongoose.Schema({
     },
     instructor: {
         type: mongoose.Schema.ObjectId,
-        ref: 'User_Class_room'
+        ref: 'User_Class_Room'
     },
     created: {
         type: Date,

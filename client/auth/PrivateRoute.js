@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import auth from './auth-helper'
 
-const PrivateRoute = ({ Component: Component, ...rest }) => {
+const PrivateRoute = ({ Component: Component, ...rest }) => (
     <Route {...rest} render = {props =>  (
         auth.isAuthenticated() ? (
             <Component {...props}/>
@@ -13,4 +13,5 @@ const PrivateRoute = ({ Component: Component, ...rest }) => {
             }}/>
         )
     )}/>
-}
+)
+export default PrivateRoute

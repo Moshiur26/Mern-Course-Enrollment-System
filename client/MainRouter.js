@@ -3,10 +3,13 @@ import {Route, Switch} from 'react-router-dom'
 import Home from './core/Home'
 import Users from './user/Users'
 import Signup from './user/Signup'
+import PrivateRoute from './auth/PrivateRoute'
 import Signin from './auth/Signin'
 import Profile from './user/Profile';
 import EditProfile from './user/EditProfile';
 import NewCourse from './course/NewCourse';
+import MyCourses from './course/MyCourses';
+import Course from './course/Course';
 import Menu from './core/Menu';
 const MainRouter = () => {
     return (<div>
@@ -18,7 +21,15 @@ const MainRouter = () => {
         <Route path="/signin" component={Signin}/>
         <Route path="/user/edit/:userId" component={EditProfile}/>
         <Route path="/user/:userId" component={Profile}/>
-        <Route path="/teach/course/new" component={NewCourse}/>
+
+        <PrivateRoute path="/teach/course/new" component={NewCourse}/>
+        <PrivateRoute path="/teach/course/edit/:courseId" component={NewCourse}/>
+        <PrivateRoute path="/teach/course/:courseId" component={Course}/>
+        <PrivateRoute path="/learn/:enrollmentId" component={NewCourse}/>
+
+        <PrivateRoute path="/teach/courses" component={MyCourses}/>
+
+        
       </Switch>
     </div>)
 }
