@@ -65,7 +65,7 @@ export default function EditProfile({ match }) {
                 // console.log("set redirect");
                 // console.log("error: ",data.error);
             } else {
-                setValues({ ...values, name: data.name, email: data.email })
+                setValues({ ...values, name: data.name, email: data.email, educator: data.educator })
                 // console.log(">>>>>:-> user data: ", data);
             }
         })
@@ -90,7 +90,7 @@ export default function EditProfile({ match }) {
             name: values.name || undefined,
             email: values.email || undefined,
             password: values.password || undefined,
-            educator: values.educator || undefined
+            educator: values.educator
         }
         // console.log(">>>jwt2: ",jwt);
         update({
