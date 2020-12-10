@@ -86,7 +86,7 @@ export default function NewCourse() {
         <div>
             <Card className={classes.card}>
                 <CardContent>
-                    <input id="icon-button-file" className={classes.input} accept="image/*" onChange={handleChange('image')} type="file" />
+                    <input accept="image/*" id="icon-button-file" className={classes.input}  onChange={handleChange('image')} type="file" />
                     <label htmlFor="icon-button-file">
                         <Button variant="contained" color="secondary" component="span">
                             Upload Photo <AddPhotoAlternate/>

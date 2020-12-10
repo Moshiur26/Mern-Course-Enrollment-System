@@ -77,7 +77,7 @@ const isEducator = (req, res, next) => {
     const isEducator = req.profile && req.profile.educator
     if (!isEducator) {
         return res.status('403').json({
-            error: "User is not a educator ->" + req.profile
+            error: "User is not a educator ->"
         })
     }
     next()

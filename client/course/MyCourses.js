@@ -1,8 +1,9 @@
-import { Avatar, Link, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router';
 import auth from '../auth/auth-helper';
 import { listByInstructor } from './api-course';
+import {Link} from 'react-router-dom';
 
 export default function MyCourses() {
     const [courses, setCourses] = useState([]);
@@ -33,9 +34,11 @@ export default function MyCourses() {
     return (
         <div>
             <List dense>
+                <Link to="/teach/course/new">
+                    <ListItem button>Create New</ListItem>
+                </Link>
                 {
                     courses.map((course, i) => {
-                        console.log("Course Id :", course._id)
                         return (<Link to={"/teach/course/" + course._id} key={i}>
                             <ListItem button>
                                 <ListItemAvatar>
