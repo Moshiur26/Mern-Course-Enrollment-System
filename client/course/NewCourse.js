@@ -79,7 +79,7 @@ export default function NewCourse() {
     }
 
     if (values.redirect) {
-        return (<Redirect to='/teach/course'/>)
+        return (<Redirect to='/teach/courses'/>)
     }
     
     return (

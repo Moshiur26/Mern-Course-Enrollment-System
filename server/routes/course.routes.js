@@ -20,6 +20,7 @@ router.route('/api/courses/:courseId/lesson/new')
 router.route('/api/courses/:courseId')
     .get(courseCtrl.read)
     .put(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.update)
+    .delete(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.remove)
 
 router.param('userId', userCtrl.userById)
 router.param('courseId', courseCtrl.courseById)

@@ -3,8 +3,9 @@ import { Edit } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import auth from '../auth/auth-helper';
 import {read} from './api-course';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import NewLesson from './NewLesson';
+import DeleteCourse from './DeleteCourse';
 
 const useStyles = makeStyles(theme => ({
     root: theme.mixins.gutters({
@@ -73,6 +74,7 @@ export default function Course({match}) {
     const classes = useStyles()
     const [course, setCourse] = useState({instructor:{}});
     const [values, setValues] = useState({
+        redirect: false,  
         error: ''
     });
     const jwt = auth.isAuthenticated()
@@ -96,6 +98,12 @@ export default function Course({match}) {
     }, [match.params.courseId]);
     const addLesson = (course) => {
       setCourse(course)
+    }
+    const removeCourse = (course) => {
+      setValues({...values, redirect: true})
+    }
+    if (values.redirect) {
+      return (<Redirect to={"/teach/courses"}/>)
     }
     const imageUrl = course._id ? `/api/courses/photo/${course._id}?${new Date().getTime()}` : '/api/courses/defaultphoto'
     return (
@@ -127,8 +135,10 @@ export default function Course({match}) {
                                 <Edit/>
                             </IconButton>
                         </Link>
+                        <DeleteCourse courseId={course._id} onRemove={removeCourse}/>
                     </span>
                 }
+                {/* {course.published && <DeleteCourse courseId={course._id} onRemove={removeCourse}/>} */}
                 {auth.isAuthenticated().user && auth.isAuthenticated().user._id == course.instructor._id && !course.published && 
                   (<NewLesson courseId={course._id} addLesson={addLesson}/>)
                 }

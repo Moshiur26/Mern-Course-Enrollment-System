@@ -24,9 +24,24 @@ const update = async (params, credentials, course) => {
             },
             body: course
         })
-        return response.json()
+        return await response.json()
     } catch (err) {
         console.log("update error: ", err);
+    }
+}
+const remove = async (params, credentials) => {
+    try {
+        let response = await fetch('/api/courses/' + params.courseId, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + credentials.t
+            }
+        })
+        return await response.json()
+    } catch(err) {
+        console.log("Remove Course Error: ", err);
     }
 }
 const listByInstructor = async (params, credentials, signal) => {
@@ -39,7 +54,7 @@ const listByInstructor = async (params, credentials, signal) => {
                 'Authorization': 'Bearer ' + credentials.t
             }
         })
-        return response.json()
+        return await response.json()
     } catch(err) {
         console.log("list by user error: ",err);
     }
@@ -55,8 +70,7 @@ const read = async (params, signal) => {
             //   'Authorization': 'Bearer ' +  credentials.t
           }  
         })
-        console.log("read response: ",response);
-        return response.json()
+        return await response.json()
     } catch(err) {
         console.log("read error: ",err);
     }
@@ -72,9 +86,9 @@ const newLesson = async (params, credentials, lesson) => {
             },
             body: JSON.stringify({lesson: lesson})
         })
-        return response.json()
+        return await response.json()
     } catch(err) {
         console.log("newLesson Error: ", err);
     }
 }
-export { create, update, listByInstructor, read, newLesson }
+export { create, update, listByInstructor, read, newLesson, remove }

@@ -85,6 +85,17 @@ const update = (req, res) => {
     })
 }
 
+const remove = async (req, res) => {
+    try {
+        let course = req.course
+        let deleteCourse = await course.remove()
+        res.json(deleteCourse)
+    } catch(err) {
+        return res.status(400).json({
+            error: dbErrorHandler.getErrorMessage(err)
+        })
+    }
+}
   
 const listByInstructor =  (req, res) => {
     // console.log("##### list by user");
@@ -133,4 +144,4 @@ const newLesson = async (req, res) => {
     }
 }
 
-export default { create, courseById, listByInstructor, read, photo, defaultPhoto, isInstructor, newLesson, update }
+export default { create, courseById, listByInstructor, read, photo, defaultPhoto, isInstructor, newLesson, update, remove }
