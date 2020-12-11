@@ -67,12 +67,13 @@ const update = (req, res) => {
         let course = req.course
         course = extend(course, fields)
         if (fields.lessons) {
-            course.lessons = fields.lessons
+            course.lessons = JSON.parse(fields.lessons)
         }
         if (files.image) {
             course.image.data = fs.readFileSync(files.image.data)
             course.image.contentType = files.image.type
         }
+        course.updated = Date.now()
         try {
             await course.save()
             res.json(course)
@@ -84,6 +85,7 @@ const update = (req, res) => {
     })
 }
 
+  
 const listByInstructor =  (req, res) => {
     // console.log("##### list by user");
     Course.find({instructor: req.profile._id}, (err, courses) => {
