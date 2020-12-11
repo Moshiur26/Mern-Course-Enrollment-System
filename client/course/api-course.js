@@ -29,15 +29,15 @@ const listByInstructor = async (params, credentials, signal) => {
         console.log("list by user error: ",err);
     }
 }
-const read = async (params, credentials, signal) => {
+const read = async (params, signal) => {
     try {
         let response = await fetch('/api/courses/' + params.courseId, {
           method: 'GET',
           signal: signal,
           headers: {
               'Accept': 'application/json',
-            //   'Content-Type': 'application/json'
-              'Authorization': 'Bearer ' +  credentials.t
+              'Content-Type': 'application/json'
+            //   'Authorization': 'Bearer ' +  credentials.t
           }  
         })
         console.log("read response: ",response);

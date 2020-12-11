@@ -80,7 +80,7 @@ export default function Course({match}) {
         const abortController = new AbortController()
         const signal = abortController.signal
         
-        read({ courseId: match.params.courseId}, { t: jwt.token }, signal)
+        read({ courseId: match.params.courseId}, signal)
             .then((data) => {
                 if (data && data.error) {
                     console.log("Course: ", data.error);
