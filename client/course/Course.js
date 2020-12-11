@@ -1,9 +1,10 @@
-import { Card, CardHeader, CardMedia, IconButton, ListItem, makeStyles, Typography } from '@material-ui/core';
+import { Avatar, Card, CardHeader, CardMedia, IconButton, List, ListItem, ListItemAvatar, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import auth from '../auth/auth-helper';
 import {read} from './api-course';
 import {Link} from 'react-router-dom';
+import NewLesson from './NewLesson';
 
 const useStyles = makeStyles(theme => ({
     root: theme.mixins.gutters({
@@ -93,6 +94,9 @@ export default function Course({match}) {
             abortController.abort()
         }
     }, [match.params.courseId]);
+    const addLesson = (course) => {
+      setCourse(course)
+    }
     const imageUrl = course._id ? `/api/courses/photo/${course._id}?${new Date().getTime()}` : '/api/courses/defaultphoto'
     return (
         <div className={classes.root}>
@@ -125,6 +129,21 @@ export default function Course({match}) {
                         </Link>
                     </span>
                 }
+                {auth.isAuthenticated().user && auth.isAuthenticated().user._id == course.instructor._id && !course.published && 
+                  (<NewLesson courseId={course._id} addLesson={addLesson}/>)
+                }
+                <List>
+                  {course.lessons && course.lessons.map((lesson, index) => (
+                    <span key={index}>
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar>{index + 1}</Avatar>
+                        </ListItemAvatar>
+                          <ListItemText primary={lesson.title}/>
+                      </ListItem>
+                    </span>
+                  ))}
+                </List>
             </Card>
         </div>
     )

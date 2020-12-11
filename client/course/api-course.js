@@ -55,7 +55,7 @@ const newLesson = async (params, credentials, lesson) => {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + credentials.t
             },
-            body: lesson
+            body: JSON.stringify({lesson: lesson})
         })
         return response.json()
     } catch(err) {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-type';
+import PropTypes from 'prop-types';
 import auth from '../auth/auth-helper';
 import { newLesson } from './api-course';
 import { Add } from '@material-ui/icons';
-import { Button, Dialog } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, TextField } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
     form: {

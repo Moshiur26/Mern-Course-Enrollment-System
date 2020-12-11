@@ -3,6 +3,7 @@ import fs from 'fs';
 import dbErrorHandler from '../helpers/dbErrorHandler';
 import Course from '../models/course.model';
 import defaultImage from '../../client/assets/images/course-default.jpg'
+import { extend } from 'lodash';
 
 const courseById = async (req, res, next, id) => {
     // console.log("course by id, id: ", id);
@@ -47,6 +48,35 @@ const create = (req, res) => {
             // console.log("########### course create result: ", result);
             res.json(result)
         } catch(err) {
+            return res.status(400).json({
+                error: dbErrorHandler.getErrorMessage(err)
+            })
+        }
+    })
+}
+const update = (req, res) => {
+    let form = new formidable.IncomingForm()
+    form.keepExtension = true
+
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            return res.status(400).json({
+                error: "Phot could not be uploaded"
+            })
+        }
+        let course = req.course
+        course = extend(course, fields)
+        if (fields.lessons) {
+            course.lessons = fields.lessons
+        }
+        if (files.image) {
+            course.image.data = fs.readFileSync(files.image.data)
+            course.image.contentType = files.image.type
+        }
+        try {
+            await course.save()
+            res.json(course)
+        } catch (err) {
             return res.status(400).json({
                 error: dbErrorHandler.getErrorMessage(err)
             })
@@ -101,4 +131,4 @@ const newLesson = async (req, res) => {
     }
 }
 
-export default { create, courseById, listByInstructor, read, photo, defaultPhoto, isInstructor, newLesson }
+export default { create, courseById, listByInstructor, read, photo, defaultPhoto, isInstructor, newLesson, update }
