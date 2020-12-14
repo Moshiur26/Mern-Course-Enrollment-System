@@ -1,8 +1,8 @@
-import { Avatar, Card, CardHeader, CardMedia, IconButton, List, ListItem, ListItemAvatar, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import { Avatar, Button, Card, CardHeader, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import auth from '../auth/auth-helper';
-import {read} from './api-course';
+import {read, update} from './api-course';
 import {Link, Redirect} from 'react-router-dom';
 import NewLesson from './NewLesson';
 import DeleteCourse from './DeleteCourse';
@@ -73,6 +73,7 @@ const useStyles = makeStyles(theme => ({
 export default function Course({match}) {
     const classes = useStyles()
     const [course, setCourse] = useState({instructor:{}});
+    const [open, setOpen] = useState(false);
     const [values, setValues] = useState({
         redirect: false,  
         error: ''
@@ -96,6 +97,27 @@ export default function Course({match}) {
             abortController.abort()
         }
     }, [match.params.courseId]);
+    const clickPublish = () =>  {
+      if (course.lessons.length > 0) {
+        setOpen(true)
+      }
+    }
+    const publish = () => {
+      const courseData = new FormData()
+      courseData.append('published', true)
+      update({ courseId: course._id }, { t: jwt.token }, courseData)
+        .then((data) => {
+          if (data && data.error) {
+            setValues({...values, error: data.error})
+          } else {
+            setCourse(data)
+            setOpen(false)
+          }
+        })
+    }
+    const handleRequestClose = () => {
+      setOpen(false)
+    }
     const addLesson = (course) => {
       setCourse(course)
     }
@@ -128,6 +150,7 @@ export default function Course({match}) {
                         {course.description}
                     </Typography>
                 </div>
+                
                 {auth.isAuthenticated().user && auth.isAuthenticated().user._id == course.instructor._id && 
                     <span>
                         <Link to={"/teach/course/edit/" + course._id} className={classes.sub}>
@@ -135,7 +158,18 @@ export default function Course({match}) {
                                 <Edit/>
                             </IconButton>
                         </Link>
-                        <DeleteCourse courseId={course._id} onRemove={removeCourse}/>
+                        { !course.published ?
+                          (<><Button color="secondary" variant="outlined" onClick={clickPublish}>
+                              { course.lessons.length == 0 ?
+                                "Add atleast one lesson to publish"
+                                : "Publish"
+                              }
+                            </Button>
+                            <DeleteCourse courseId={course._id} onRemove={removeCourse}/>
+                            </>)                    
+                            :
+                            (<Button color="primary" variant="outlined">Published</Button>)
+                        }
                     </span>
                 }
                 {/* {course.published && <DeleteCourse courseId={course._id} onRemove={removeCourse}/>} */}
@@ -155,6 +189,22 @@ export default function Course({match}) {
                   ))}
                 </List>
             </Card>
+            <Dialog open={open} onClose={handleRequestClose}>
+              <DialogTitle>{"Publish Course"}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Confirm to publish your course.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleRequestClose} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={publish} color="secondary" autoFocus="autoFocus">
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
         </div>
     )
 };
