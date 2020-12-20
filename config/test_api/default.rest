@@ -1,0 +1,19 @@
+GET http://localhost:5000/subscribers
+
+###
+
+GET http://localhost:5000/subscribers/5f6dc366863b2328f81fd2d0
+
+
+###
+
+POST http://localhost:5000/subscribers
+Content-Type: application/json
+
+{
+    "name": "Moshiur Rahman",
+    "subscribedToChannel": "Soft Tech"
+}
+
+###
+DELETE http://localhost:5000/subscribers/5f6dbec047fa6a265c02987f

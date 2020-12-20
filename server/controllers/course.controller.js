@@ -111,6 +111,17 @@ const listByInstructor =  (req, res) => {
         res.json(courses)
     }).populate('instructor', '_id name')
 }
+const listPublished = (req, res) => {
+    Course.find({published: true}, (err, courses) => {
+        if (err) {
+            return res.status(400).json({
+                error: dbErrorHandler.getErrorMessage(err)
+            })
+        } else {
+            res.json(courses)
+        }
+    }).populate('instructor', '_id name')
+}
 const photo = (req, res, next) => {
     if (req.course.image && req.course.image.data) {
         res.set('Content-Type', req.course.image.contentType)
@@ -144,4 +155,4 @@ const newLesson = async (req, res) => {
     }
 }
 
-export default { create, courseById, listByInstructor, read, photo, defaultPhoto, isInstructor, newLesson, update, remove }
+export default { create, courseById, listByInstructor, read, photo, defaultPhoto, isInstructor, newLesson, update, remove, listPublished }

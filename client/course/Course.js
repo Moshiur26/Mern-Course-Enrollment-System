@@ -206,5 +206,5 @@ export default function Course({match}) {
               </DialogActions>
             </Dialog>
         </div>
-    )
+        )
 };
