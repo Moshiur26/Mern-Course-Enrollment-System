@@ -11,6 +11,7 @@ import NewCourse from './course/NewCourse';
 import MyCourses from './course/MyCourses';
 import Course from './course/Course';
 import EditCourse from './course/EditCourse';
+import Enrollment from './enrollment/Enrollment';
 import Menu from './core/Menu';
 const MainRouter = () => {
     return (<div>
@@ -26,7 +27,7 @@ const MainRouter = () => {
         <PrivateRoute path="/teach/course/new" component={NewCourse}/>
         <PrivateRoute path="/teach/course/edit/:courseId" component={EditCourse}/>
         <PrivateRoute path="/teach/course/:courseId" component={Course}/>
-        <PrivateRoute path="/learn/:enrollmentId" component={NewCourse}/>
+        <PrivateRoute path="/learn/:enrollmentId" component={Enrollment}/>
 
         <PrivateRoute path="/teach/courses" component={MyCourses}/>
 

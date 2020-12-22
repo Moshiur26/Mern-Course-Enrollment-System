@@ -1,11 +1,13 @@
-import { Avatar, Button, Card, CardHeader, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemText, makeStyles, Typography } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
+import { Avatar, Button, Card, CardHeader, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import { Edit, People, VerifiedUser } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import auth from '../auth/auth-helper';
 import {read, update} from './api-course';
 import {Link, Redirect} from 'react-router-dom';
 import NewLesson from './NewLesson';
 import DeleteCourse from './DeleteCourse';
+import Enroll from './../enrollment/Enroll';
+import { enrollmentStats } from '../enrollment/api-enrollment';
 
 const useStyles = makeStyles(theme => ({
     root: theme.mixins.gutters({
@@ -74,6 +76,7 @@ export default function Course({match}) {
     const classes = useStyles()
     const [course, setCourse] = useState({instructor:{}});
     const [open, setOpen] = useState(false);
+    const [stats, setStats] = useState({});
     const [values, setValues] = useState({
         redirect: false,  
         error: ''
@@ -86,7 +89,7 @@ export default function Course({match}) {
         read({ courseId: match.params.courseId}, signal)
             .then((data) => {
                 if (data && data.error) {
-                    console.log("Course: ", data.error);
+                    console.log("Course read error: ", data.error);
                     setValues({...values, error: data.error})
                 } else {
                     console.log("Data : ", data);
@@ -97,11 +100,32 @@ export default function Course({match}) {
             abortController.abort()
         }
     }, [match.params.courseId]);
+
+    useEffect(() => {
+        const abortController = new AbortController()
+        const signal = abortController.signal
+        
+        enrollmentStats({ courseId: match.params.courseId}, {t: jwt.token}, signal)
+            .then((data) => {
+                if (data && data.error) {
+                    console.log("Course enrollmentStats error: ", data.error);
+                    setValues({...values, error: data.error})
+                } else {
+                    console.log("Data : ", data);
+                    setStats(data)
+                }
+            })
+        return function cleanup() {
+            abortController.abort()
+        }
+    }, [match.params.courseId]);
+
     const clickPublish = () =>  {
       if (course.lessons.length > 0) {
         setOpen(true)
       }
     }
+
     const publish = () => {
       const courseData = new FormData()
       courseData.append('published', true)
@@ -115,19 +139,25 @@ export default function Course({match}) {
           }
         })
     }
+
     const handleRequestClose = () => {
       setOpen(false)
     }
+
     const addLesson = (course) => {
       setCourse(course)
     }
+
     const removeCourse = (course) => {
       setValues({...values, redirect: true})
     }
+
     if (values.redirect) {
       return (<Redirect to={"/teach/courses"}/>)
     }
+    
     const imageUrl = course._id ? `/api/courses/photo/${course._id}?${new Date().getTime()}` : '/api/courses/defaultphoto'
+
     return (
         <div className={classes.root}>
             <Card className={classes.card}>
@@ -139,39 +169,54 @@ export default function Course({match}) {
                         </Link>
                         <span className={classes.category}>{course.category}</span>
                     </div>}
+                    action={<>
+                      {auth.isAuthenticated().user && auth.isAuthenticated().user._id == course.instructor._id && 
+                      <span>
+                          <Link to={"/teach/course/edit/" + course._id} className={classes.sub}>
+                              <IconButton aria-label="Edit" color="secondary">
+                                  <Edit/>
+                              </IconButton>
+                          </Link>
+                          { !course.published ?
+                            (<><Button color="secondary" variant="outlined" onClick={clickPublish}>
+                                { course.lessons.length == 0 ?
+                                  "Add atleast one lesson to publish"
+                                  : "Publish"
+                                }
+                              </Button>
+                              <DeleteCourse courseId={course._id} onRemove={removeCourse}/>
+                              </>)                    
+                              :
+                              (<Button color="primary" variant="outlined">Published</Button>)
+                          }
+                      </span>
+                    }
+                    {course.published && (<div>
+                      <span className={classes.statSpan}>
+                        <People/> {stats.totalEnrolled} enrolled
+                      </span>
+                      <span className={classes.statSpan}>
+                        <VerifiedUser/> {stats.totalCompleted} completed
+                      </span>
+                    </div>)} 
+                  </>}
                 />
-                <CardMedia
-                    image={imageUrl}
-                    title={course.name}
-                    className={classes.media}
-                />
-                <div>
-                    <Typography variant="body1">
-                        {course.description}
-                    </Typography>
+                <div className={classes.flex}>                  
+                  <CardMedia
+                      image={imageUrl}
+                      title={course.name}
+                      className={classes.media}
+                  />
+                  <div className={classes.details}>
+                      <Typography variant="body1" className={classes.subheading}>
+                          {course.description}
+                      </Typography>
+                  </div>
+                  {course.published && <div className={classes.enroll}><Enroll courseId={Course._id}/></div>}
                 </div>
+
+                <br/>
                 
-                {auth.isAuthenticated().user && auth.isAuthenticated().user._id == course.instructor._id && 
-                    <span>
-                        <Link to={"/teach/course/edit/" + course._id} className={classes.sub}>
-                            <IconButton aria-label="Edit" color="secondary">
-                                <Edit/>
-                            </IconButton>
-                        </Link>
-                        { !course.published ?
-                          (<><Button color="secondary" variant="outlined" onClick={clickPublish}>
-                              { course.lessons.length == 0 ?
-                                "Add atleast one lesson to publish"
-                                : "Publish"
-                              }
-                            </Button>
-                            <DeleteCourse courseId={course._id} onRemove={removeCourse}/>
-                            </>)                    
-                            :
-                            (<Button color="primary" variant="outlined">Published</Button>)
-                        }
-                    </span>
-                }
                 {/* {course.published && <DeleteCourse courseId={course._id} onRemove={removeCourse}/>} */}
                 {auth.isAuthenticated().user && auth.isAuthenticated().user._id == course.instructor._id && !course.published && 
                   (<NewLesson courseId={course._id} addLesson={addLesson}/>)

@@ -1,3 +1,1 @@
-"# mern-basic-boilerplate-simple-setup" 
-"# mern-boilerplate-user-login-system" 
-"# Mern-Course-Enrollment-System" 
+"# Mern-Course-Enrollment-System"
