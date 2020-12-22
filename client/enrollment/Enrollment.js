@@ -1,4 +1,4 @@
-import { Avatar, Divider, Drawer, List, ListItem, ListItemAvatar, ListItemIcon, ListItemSecondaryAction, ListItemText, ListSubheader, makeStyles } from '@material-ui/core';
+import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Divider, Drawer, List, ListItem, ListItemAvatar, ListItemIcon, ListItemSecondaryAction, ListItemText, ListSubheader, makeStyles, Typography } from '@material-ui/core';
 import { CheckCircle, Info, RadioButtonUnchecked } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import auth from '../auth/auth-helper';
@@ -187,5 +187,23 @@ export default function Enrollment({match}) {
             </List>
             <Divider/>
         </Drawer>
+        {values.drawer != -1 && (<>
+          <Typography variant="h5">{enrollment.course.name}</Typography>
+          <Card>
+            <CardHeader
+              title={enrollment.course.lessons[values.drawer].title}
+            />
+            <CardContent>
+              <Typography variant="body1">
+                {enrollment.course.lessons[values.drawer].content}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <a href={enrollment.course.lessons[values.drawer].resource_url}>
+                <Button variant="contained" color="primary">Resource Link</Button>
+              </a>
+            </CardActions>
+          </Card>
+        </>)}
     </div>)
 };
